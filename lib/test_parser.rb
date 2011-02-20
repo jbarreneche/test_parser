@@ -28,7 +28,7 @@ module TestParser
 
   def sanitize_path(path)
     return path if path.is_a? Pathname
-    Pathname.new(path)
+    Pathname.new(path).expand_path
   end
 
   extend self

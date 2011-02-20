@@ -5,9 +5,9 @@ module RSpec
   end
 
   def self.with_world(world)
-    old_world, ::RSpec.world = ::RSpec.world, world
+    old_world, self.world = self.world, world
     result = yield(world)
-    ::RSpec.world = old_world
+    self.world = old_world
     result
   end
 

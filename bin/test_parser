@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require "test_parser"
+require 'yaml'
+
+$stdout << TestParser.all_tests(ARGV.last).to_yaml

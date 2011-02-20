@@ -1,4 +1,6 @@
 require 'minitest/unit'
+require_relative 'extensions/minitest'
+
 require 'test_parser'
 
 module TestParser
@@ -8,6 +10,8 @@ module TestParser
     def self.find_tests!(path, options = {})
       glob = options[:glob] || 'test/**/*_test.rb'
 
+      ::MiniTest::Unit.dont_install_at_exit!
+      
       TestParser.require_all(path, glob)
 
       ::MiniTest::Unit::TestCase.test_suites.collect_concat do |klass|
