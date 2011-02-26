@@ -47,6 +47,11 @@ describe TestParser::SourceCode do
         end
       METHOD
     end
+    it 'finds the line without its block' do
+      source_code = TestParser::SourceCode.for('dsl_source.rb')
+      snippet     = source_code.extract_code_from_line(5)
+      snippet.to_code.should match_code(%{pending 'ble'})
+    end
   end
 
   def standard_class_source
@@ -65,6 +70,7 @@ describe TestParser::SourceCode do
         method 'ble' do
           testing_something
         end
+        pending "ble"
       end
     SOURCE
   end

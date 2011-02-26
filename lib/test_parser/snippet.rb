@@ -6,6 +6,7 @@ module TestParser
     attr_reader :sexp
 
     def initialize(sexp)
+      raise ArgumentError unless sexp
       @sexp = sexp
     end
 

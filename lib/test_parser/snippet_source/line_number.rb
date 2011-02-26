@@ -14,6 +14,8 @@ module TestParser
       
       def snippet
         source_code.extract_code_from_line(line_number)
+      rescue NoCodeInLineError
+        raise "File: #{@file}:#{@line_number}"
       end
 
     end
