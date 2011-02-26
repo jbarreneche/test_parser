@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require "test_parser"
-require 'yaml'
+require "test_parser/command_line"
 
-$stdout << TestParser.all_tests(ARGV.last).to_yaml
+TestParser::CommandLine.new(ARGV).run
