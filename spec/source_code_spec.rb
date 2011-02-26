@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'test_parser/source_code'
 
 describe TestParser::SourceCode do
+
   include FakeFS::SpecHelpers
 
   before(:each) do
@@ -18,13 +19,16 @@ describe TestParser::SourceCode do
   end
 
   it 'has the sexp of the original file' do
-    sexp = RubyParser.new.parse standard_class_source
-    TestParser::SourceCode.for('standard_class_source.rb').sexp.should == sexp
+    sexp        = RubyParser.new.parse standard_class_source
+    source_code = TestParser::SourceCode.for('standard_class_source.rb')
+
+    source_code.sexp.should == sexp
   end
 
   describe '.extract_method' do
     it 'finds the method definition from the method name' do
-      snippet = TestParser::SourceCode.for('standard_class_source.rb').extract_method('method')
+      source_code = TestParser::SourceCode.for('standard_class_source.rb')
+      snippet     = source_code.extract_method('method')
       snippet.to_code.should match_code(<<-METHOD)
         def method(some)
           puts some
@@ -35,7 +39,8 @@ describe TestParser::SourceCode do
 
   describe '.extract_code_from_line' do
     it 'finds the line with its block' do
-      snippet = TestParser::SourceCode.for('dsl_source.rb').extract_code_from_line(2)
+      source_code = TestParser::SourceCode.for('dsl_source.rb')
+      snippet     = source_code.extract_code_from_line(2)
       snippet.to_code.should match_code(<<-METHOD)
         method 'ble' do
           testing_something

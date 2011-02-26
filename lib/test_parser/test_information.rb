@@ -10,13 +10,11 @@ module TestParser
     end
 
     def snippet
-      source_code = SourceCode.for(file)
-      case type
-      when :rspec2
-        source_code.extract_code_from_line(extras[:line_number])
-      when :minitest
-        source_code.extract_method(extras[:method_name])
-      end
+      snippet_source.snippet
+    end
+
+    def file
+      snippet_source.file
     end
 
   end

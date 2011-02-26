@@ -1,25 +1,18 @@
-require 'test_parser/common'
-require 'test_parser/minitest'
-require 'test_parser/rspec'
+require 'test_parser/parser/common'
+require 'test_parser/parser/minitest'
+require 'test_parser/parser/rspec'
 
 module TestParser
 
+  DEFAULT_PARSERS = [Parser::MiniTest, Parser::RSpec]
+
   def all_tests(path, options = {})
-    frameworks = options[:frameworks] ||= [:rspec, :minitest]
-    path = sanitize_path(path)
-    frameworks.collect_concat do |framework|
-      send "#{framework}_tests", path, options[framework]
+    parsers = options[:parsers] ||= DEFAULT_PARSERS
+    path    = sanitize_path(path)
+
+    parsers.collect_concat do |parser|
+      parser.find_tests(path, options[parser.type] || {})
     end
-  end
-
-  def minitest_tests(path, options = nil)
-    options ||= {}
-    MiniTest.find_tests!(path, options)
-  end
-
-  def rspec_tests(path, options = nil)
-    options ||= {}
-    RSpec.find_tests!(path, options)
   end
 
   def require_all(path, glob)
@@ -28,6 +21,7 @@ module TestParser
 
   def sanitize_path(path)
     return path if path.is_a? Pathname
+
     Pathname.new(path).expand_path
   end
 

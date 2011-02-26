@@ -2,7 +2,8 @@ require 'bundler'
 Bundler.setup
 Bundler.require :default, :test
 
-Dir[File.join(File.dirname(__FILE__), 'support', '**', '*.rb')].each {|f| require f }
+support_glob = File.join(File.dirname(__FILE__), 'support', '**', '*.rb')
+Dir[support_glob].each {|f| require f }
 
 require 'fakefs/spec_helpers'
 
