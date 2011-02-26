@@ -1,5 +1,13 @@
 module TestParser
-  class TestInformation < Struct.new(:type, :identification, :file, :extras)
+  class TestInformation
+
+    attr_reader :type, :identification, :snippet_source
+
+    def initialize(type, identification, snippet_source)
+      @type           = type
+      @identification = identification
+      @snippet_source = snippet_source
+    end
 
     def snippet
       source_code = SourceCode.for(file)
