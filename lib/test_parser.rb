@@ -9,6 +9,10 @@ module TestParser
   def all_tests(path, options = {})
     parsers = options[:parsers] ||= DEFAULT_PARSERS
     path    = sanitize_path(path)
+    libs    = options[:libs] || []
+
+    libs << 'spec'
+    add_libs_to_load_path(path, libs)
 
     parsers.collect_concat do |parser|
       parser.find_tests(path, options[parser.type] || {})
@@ -26,4 +30,14 @@ module TestParser
   end
 
   extend self
+  
+  private
+  
+  def add_libs_to_load_path(path, libs)
+    libs.each do |lib|
+      dir = (path + lib).expand_path.to_s
+      $LOAD_PATH.unshift(dir) unless $LOAD_PATH.include?(dir)
+    end
+  end
+  
 end

@@ -66,7 +66,7 @@ module TestParser
       end
 
       def example_description
-        unless example.description.empty? 
+        unless example.description.empty?
           example.description
         else
           snippet.get_block.to_code
