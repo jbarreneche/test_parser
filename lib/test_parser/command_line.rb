@@ -1,12 +1,10 @@
+require 'optparse'
 require 'test_parser'
 
 require 'test_parser/test_formatter/yaml'
 
 module TestParser
   class CommandLine
-
-    LONG_RE     = /^(--\w+(?:-\w+)*)$/
-    INC_LIB_RE  = %r{^-I([\w/]+(?::[\w/]+)*)$}
 
     attr_reader :stdout, :stderr
 
@@ -48,37 +46,37 @@ module TestParser
     end
 
     def configure_options(options)
-      until options.empty? do
-        option = options.shift
-        apply_option(option, options)
-      end
-      check_registered_values
-    end
+      OptionParser.new do |parser|
+        parser.banner = "Usage: test_parser [options] [directory]"
+        
+        parser.on('-I DIRECTORY', 'specify $LOAD_PATH directory (may be used more than once)') do |dir|
+          append_libs(dir)
+        end
 
-    def apply_option(option, remaining_opts)
-      case option
-      when LONG_RE
-        apply_switch($1, remaining_opts)
-      when INC_LIB_RE
-        append_libs($1)
-      else
-        @registered_values << option
-      end
+        parser.on('-f', '--format FORMATTER', 'Choose a formatter',
+                  '  y[aml] - YAML format') do |o|
+          set_formater(o)
+        end
+
+        parser.on_tail('-h', '--help', "This is it!") do
+          puts parser
+          exit
+        end
+        
+      end.parse!(options)
+
+      extract_test_suite_path(options)
     end
 
     def append_libs(libs)
       @libs += libs.split(':')
     end
 
-    def check_registered_values
-      case @registered_values.size
-      when 0
-        # Do nothing
-      when 1
-        @test_suite_path = @registered_values.first
-      else
-        @test_suite_path = @registered_values.pop
-        log_err "Unknown use for values: #{@registered_values.inspect}"
+    def extract_test_suite_path(args)
+      @test_suite_path = args.pop
+
+      unless args.empty?
+        log_err "Unknown use for values: #{args.inspect}"
       end
     end
 
@@ -90,5 +88,14 @@ module TestParser
       stderr.puts *args 
     end
 
+    def set_formater(format)
+      case format
+      when /y(aml)?/i
+        @formatter = yaml_formatter
+      else
+        log_err "Unknown formatter #{format}"
+      end
+    end
+    
   end
 end
